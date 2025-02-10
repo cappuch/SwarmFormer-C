@@ -71,10 +71,18 @@ jobs:
 
     - name: List Release Directory
       run: |
-        if [ -d "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}" ]; then
-          ls -l ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          if [ -d "${{ steps.strings.outputs.build-output-dir }}\${{ matrix.build_type }}" ]; then
+            ls -l "${{ steps.strings.outputs.build-output-dir }}\${{ matrix.build_type }}"
+          else
+            echo "${{ matrix.build_type }} directory not found!"
+          fi
         else
-          echo "${{ matrix.build_type }} directory not found!"
+          if [ -d "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}" ]; then
+            ls -l "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}"
+          else
+            echo "${{ matrix.build_type }} directory not found!"
+          fi
         fi
       shell: bash
 
@@ -83,8 +91,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/swarmformer.exe
-          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/swarmformer
+          ${{ steps.strings.outputs.build-output-dir }}/swarmformer.exe
+          ${{ steps.strings.outputs.build-output-dir }}/swarmformer
         tag_name: ${{ env.tag_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
