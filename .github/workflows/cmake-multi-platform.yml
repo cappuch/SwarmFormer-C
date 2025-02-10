@@ -65,7 +65,13 @@ jobs:
         echo "tag_name=$tag_name" >> $env:GITHUB_ENV  # Set tag_name as an environment variable
 
     - name: List Release Directory
-      run: ls -l ${{ steps.strings.outputs.build-output-dir }}/Release  # List files in the Release directory
+      run: |
+        if [ -d "${{ steps.strings.outputs.build-output-dir }}/Release" ]; then
+          ls -l ${{ steps.strings.outputs.build-output-dir }}/Release
+        else
+          echo "Release directory not found!"
+        fi
+      shell: bash
 
     - name: Publish Release
       if: github.ref == 'refs/heads/main'
