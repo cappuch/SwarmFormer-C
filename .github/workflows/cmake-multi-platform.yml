@@ -51,6 +51,11 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
 
+    - name: List Build Directory
+      run: |
+        ls -l ${{ steps.strings.outputs.build-output-dir }}
+      shell: bash
+
     - name: Create Tag
       id: create_tag
       if: github.ref == 'refs/heads/main'
@@ -66,10 +71,10 @@ jobs:
 
     - name: List Release Directory
       run: |
-        if [ -d "${{ steps.strings.outputs.build-output-dir }}/Release" ]; then
-          ls -l ${{ steps.strings.outputs.build-output-dir }}/Release
+        if [ -d "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}" ]; then
+          ls -l ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}
         else
-          echo "Release directory not found!"
+          echo "${{ matrix.build_type }} directory not found!"
         fi
       shell: bash
 
@@ -78,8 +83,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ steps.strings.outputs.build-output-dir }}/Release/swarmformer.exe
-          ${{ steps.strings.outputs.build-output-dir }}/Release/swarmformer
+          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/swarmformer.exe
+          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/swarmformer
         tag_name: ${{ env.tag_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
