@@ -64,11 +64,14 @@ jobs:
         git push origin $tag_name
         echo "tag_name=$tag_name" >> $env:GITHUB_ENV  # Set tag_name as an environment variable
 
+    - name: List Files in Build Directory
+      run: dir ${{ steps.strings.outputs.build-output-dir }}  # List files on Windows to debug the issue
+
     - name: Publish Release
       if: github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{ steps.strings.outputs.build-output-dir }}/*
+        files: ${{ steps.strings.outputs.build-output-dir }}/*   # Ensure this directory contains files
         tag_name: ${{ env.tag_name }}  # Use the tag from environment variables
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
