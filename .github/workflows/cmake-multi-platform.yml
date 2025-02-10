@@ -64,8 +64,8 @@ jobs:
         git push origin $tag_name
         echo "tag_name=$tag_name" >> $env:GITHUB_ENV  # Set tag_name as an environment variable
 
-    - name: List Files in Build Directory
-      run: dir ${{ steps.strings.outputs.build-output-dir }}  # List files on Windows to debug
+    - name: List Release Directory
+      run: ls -l ${{ steps.strings.outputs.build-output-dir }}/Release  # List files in the Release directory
 
     - name: Publish Release
       if: github.ref == 'refs/heads/main'
@@ -73,7 +73,7 @@ jobs:
       with:
         files: |
           ${{ steps.strings.outputs.build-output-dir }}/Release/swarmformer.exe
-          ${{ steps.strings.outputs.build-output-dir }}/Release/swarmformer # for Linux
+          ${{ steps.strings.outputs.build-output-dir }}/Release/swarmformer
         tag_name: ${{ env.tag_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
