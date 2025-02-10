@@ -52,6 +52,7 @@ jobs:
       run: ctest --build-config ${{ matrix.build_type }}
 
     - name: Create Tag
+      id: create_tag
       if: github.ref == 'refs/heads/main'
       run: |
         commit_number=$(git rev-parse --short HEAD)
@@ -60,22 +61,13 @@ jobs:
         git config user.email github-actions@github.com
         git tag $tag_name
         git push origin $tag_name
-
-
-    - name: Create Release
-      if: github.ref == 'refs/heads/main'
-      run: |
-        commit_number=$(git rev-parse --short HEAD)
-        tag_name="commit_${commit_number}"
-        git tag $tag_name
-        git push origin $tag_name
+        echo "tag_name=${tag_name}" >> "$GITHUB_ENV"
 
     - name: Publish Release
       if: github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ steps.strings.outputs.build-output-dir }}/*
-        tag_name: ${{ steps.create_tag.outputs.tag_name }}
+        tag_name: ${{ env.tag_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
