@@ -95,7 +95,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ steps.strings.outputs.build-output-dir }}/swarmformer.exe
+          ${{ steps.strings.outputs.build-output-dir }}\${{ matrix.build_type }}\swarmformer.exe
           ${{ steps.strings.outputs.build-output-dir }}/swarmformer
         tag_name: ${{ env.tag_name }}
       env:
