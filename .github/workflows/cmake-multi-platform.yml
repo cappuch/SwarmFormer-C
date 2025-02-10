@@ -53,7 +53,11 @@ jobs:
 
     - name: List Build Directory
       run: |
-        ls -l ${{ steps.strings.outputs.build-output-dir }}
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          ls -l "${{ steps.strings.outputs.build-output-dir }}"
+        else
+          ls -l ${{ steps.strings.outputs.build-output-dir }}
+        fi
       shell: bash
 
     - name: Create Tag
